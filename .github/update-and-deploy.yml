@@ -1,0 +1,40 @@
+name: Update Cache
+
+on:
+    schedule:
+        - cron: "0 0 * * *" # Runs at 00:00 UTC every day
+    workflow_dispatch: # Allows manual trigger
+    push:
+        branches: [main]
+
+jobs:
+    update-cache:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.10"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Update cache
+              run: |
+                  mkdir -p cache
+                  python -c "
+                  from hyperliquid.vaults import update_all_cache_data
+                  update_all_cache_data(show_progress=False)
+                  "
+
+            - name: Commit and push if changes
+              run: |
+                  git config --local user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --local user.name "github-actions[bot]"
+                  git add cache/
+                  git commit -m "Update cache data" || exit 0
+                  git push
