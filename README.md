@@ -51,7 +51,3 @@ The application uses a caching system that:
 -   Updates automatically every 24 hours via GitHub Actions
 -   Stores vault data to minimize API calls
 -   Maintains historical data for analysis
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
